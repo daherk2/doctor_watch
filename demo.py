@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import time
+import random as rd
 
 html_temp = """
 <div style="background-color:rgb(14, 17, 23); padding:10px; border-radius:10px">
@@ -76,10 +77,22 @@ def gerar_historico_anamneses(n):
         "Consulta de acompanhamento para controle de diabetes.",
         "Paciente relata dificuldade para dormir e ansiedade.",
         "Exame de rotina, sem queixas específicas.",
-	"Consulta de acompanhamento para controle depressao arterial.",
+        "Consulta de acompanhamento para controle de pressao arterial.",
+        "Exame de rotina, sem queixas específicas.",
+        "Paciente reclamou de dor de cabeça persistente. Possível enxaqueca.",
+        "Paciente relata dificuldade para dormir e ansiedade.",
+        "Consulta de acompanhamento para controle de pressao arterial.",
+        "Exame de rotina, sem queixas específicas.",
+        "Paciente relata dificuldade para dormir e ansiedade.",
+	"Consulta de acompanhamento para controle de pressao arterial.",
         "Paciente apresentou sintomas de alergia sazonal.",
+        "Paciente relata dificuldade para dormir e ansiedade.",
+        "Paciente reclamou de dor de cabeça persistente. Possível enxaqueca.",
         "Dor no peito relatada, necessitando de avaliação cardiológica.",
 	"Ansiedade",
+        "Paciente com asma",
+        "Paciente com tumor na pele",
+        "Paciente com pancreatite aguda",
         "Lesão no joelho durante atividade física, requer reabilitação."
     ]
     return [random.choice(historicos) for _ in range(n)]
@@ -94,15 +107,14 @@ def gerar_tags_consultas(n):
     tags = ["Urgente", "Rotina", "Febre", "Acompanhamento","Acompanhamento", "Acompanhamento", "Ansiedade", "Rotina", "Lesão"]
     return [random.choice(tags) for _ in range(n)]
 
-# Gerar dados fictícios adicionais para consultas
-n_consultas_adicionais = 7  # Para um total de 10 consultas, incluindo as 3 originais
+nomes = ["João Silva","João Silva","João Silva", "Maria Oliveira","Maria Oliveira","Maria Oliveira", "Pedro Rocha","Pedro Rocha","Pedro Rocha","Pedro Rocha", "Ana Costa","Ana Costa","Ana Costa", "Lucas Santos","Lucas Santos","Lucas Santos","Lucas Santos","Lucas Santos", "Carla Dias","Carla Dias","Carla Dias","Carla Dias", "Roberto Lima","Roberto Lima","Roberto Lima","Roberto Lima","Roberto Lima", "Fernanda Gomes","Fernanda Gomes","Fernanda Gomes","Fernanda Gomes", "Márcio Souza","Márcio Souza","Márcio Souza","Márcio Souza","Márcio Souza", "Juliana Martins","Juliana Martins","Juliana Martins","Juliana Martins","Juliana Martins"]
 
 dados_consultas = {
-    "Nome": gerar_nomes(n_consultas_adicionais),  # Reutiliza a função gerar_nomes definida anteriormente
-    "Data": gerar_datas_ultima_consulta(n_consultas_adicionais, datetime.now()),
-    "Histórico de Anamneses": gerar_historico_anamneses(n_consultas_adicionais),
-    "Diagnósticos com CIDs": gerar_diagnosticos_cids(n_consultas_adicionais),
-    "Tags": gerar_tags_consultas(n_consultas_adicionais),
+    "Nome": nomes,
+    "Data": [ datetime(day=rd.randint(1,28), month=rd.randint(1,12), year=2023) for i in nomes],
+    "Histórico de Anamneses": gerar_historico_anamneses(len(nomes)),
+    "Diagnósticos com CIDs": gerar_diagnosticos_cids(len(nomes)),
+    "Tags": gerar_tags_consultas(len(nomes)),
 }
 
 df_consultas = pd.DataFrame(dados_consultas)
@@ -120,6 +132,8 @@ paciente_selecionado = st.selectbox("Selecione um paciente", df_pacientes["Nome"
 
 st.write("Detalhes do Paciente Selecionado:")
 st.table(df_pacientes[df_pacientes["Nome"] == paciente_selecionado])
+
+#st.table(dados_consultas)
 
 # Campo de busca para tags
 tag_buscada = st.text_input("Buscar consultas por tag:")
