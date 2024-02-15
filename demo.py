@@ -3,62 +3,138 @@ import pandas as pd
 from datetime import datetime
 import time
 
+html_temp = """
+<div style="background-color:rgb(14, 17, 23); padding:10px; border-radius:10px">
+<h2 style="color:white; text-align:center;">Desenvolvido por:</h2>
+<img src="https://i.ibb.co/5jkmBWP/Untitled-presentation-1.png" alt="Logo" style="display: block; margin-left: auto; margin-right: auto; width: 50%;">
+</div>
+"""
+
+st.markdown(html_temp, unsafe_allow_html=True)
+
 # Dados fictícios de pacientes
+from datetime import datetime, timedelta
+import random
+
+# Função para gerar nomes fictícios
+def gerar_nomes(n):
+    nomes = ["João Silva", "Maria Oliveira", "Pedro Rocha", "Ana Costa", "Lucas Santos", "Carla Dias", "Roberto Lima", "Fernanda Gomes", "Márcio Souza", "Juliana Martins"]
+    return random.sample(nomes, n)
+
+# Função para gerar datas de última consulta
+def gerar_datas_ultima_consulta(n, start_date):
+    return [start_date - timedelta(days=random.randint(0, 365)) for _ in range(n)]
+
+# Função para gerar dados numéricos aleatórios dentro de um intervalo
+def gerar_dados_numericos(n, min_val, max_val):
+    return [random.randint(min_val, max_val) for _ in range(n)]
+
+# Função para gerar tipos sanguíneos aleatórios
+def gerar_tipos_sanguineos(n):
+    tipos_sanguineos = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"]
+    return [random.choice(tipos_sanguineos) for _ in range(n)]
+
+# Função para gerar respostas sim/não/ocasionalmente
+def gerar_respostas_binarias(n, opcoes=["Sim", "Não"]):
+    return [random.choice(opcoes) for _ in range(n)]
+
+# Função para gerar comorbidades
+def gerar_comorbidades(n):
+    comorbidades_opcoes = ["", "Hipertensão", "Diabetes", "Hipertensão, Diabetes", "Doença Cardíaca", "Asma"]
+    return [random.choice(comorbidades_opcoes) for _ in range(n)]
+
+# Definir o número de pacientes a gerar
+n_pacientes = 7  # Incluindo os 3 originais, totalizando 10
+
+# Gerar dados fictícios adicionais
 dados_pacientes = {
-    "Nome": ["João Silva", "Maria Oliveira", "Pedro Rocha"],
-    "Idade": [34, 45, 29],
-    "Data da Última Consulta": [datetime(2023, 12, 10), datetime(2023, 11, 25), datetime(2023, 10, 15)],
-    "Peso": [80, 65, 77],
-    "Altura": [1.75, 1.60, 1.82],
-    "Tipo Sanguíneo": ["O+", "A-", "B+"],
-    "Uso de Álcool": ["Não", "Sim", "Ocasionalmente"],
-    "Problema Renal": ["Não", "Não", "Sim"],
-    "Problema Cardíaco": ["Não", "Sim", "Não"],
-    "Anemia": ["Não", "Não", "Sim"],
-    "Comorbidades": ["Hipertensão", "", "Hipertensão, Diabetes"],
-    "Fuma": ["Não", "Não", "Sim"],
-    "Diabetes": ["Não", "Sim", "Sim"],
-    "Já Fez Cirurgia": ["Sim", "Não", "Não"],
-    "Usou Drogas": ["Não", "Não", "Sim"]
+    "Nome": gerar_nomes(n_pacientes),
+    "Idade": gerar_dados_numericos(n_pacientes, 18, 65),
+    "Data da Última Consulta": gerar_datas_ultima_consulta(n_pacientes, datetime.now()),
+    "Peso": gerar_dados_numericos(n_pacientes, 50, 100),
+    "Altura": [round(random.uniform(1.5, 2.0), 2) for _ in range(n_pacientes)],
+    "Tipo Sanguíneo": gerar_tipos_sanguineos(n_pacientes),
+    "Uso de Álcool": gerar_respostas_binarias(n_pacientes, ["Não", "Sim", "Ocasionalmente"]),
+    "Problema Renal": gerar_respostas_binarias(n_pacientes),
+    "Problema Cardíaco": gerar_respostas_binarias(n_pacientes),
+    "Anemia": gerar_respostas_binarias(n_pacientes),
+    "Comorbidades": gerar_comorbidades(n_pacientes),
+    "Fuma": gerar_respostas_binarias(n_pacientes),
+    "Diabetes": gerar_respostas_binarias(n_pacientes),
+    "Já Fez Cirurgia": gerar_respostas_binarias(n_pacientes),
+    "Usou Drogas": gerar_respostas_binarias(n_pacientes),
 }
 
-# Convertendo os dados para um DataFrame do pandas
+
 df_pacientes = pd.DataFrame(dados_pacientes)
 
 # Dados fictícios de consultas
+# Função para gerar históricos de anamneses fictícios
+def gerar_historico_anamneses(n):
+    historicos = [
+        "Paciente reclamou de dor de cabeça persistente. Possível enxaqueca.",
+        "Consulta de acompanhamento para controle de diabetes.",
+        "Paciente relata dificuldade para dormir e ansiedade.",
+        "Exame de rotina, sem queixas específicas.",
+	"Consulta de acompanhamento para controle depressao arterial.",
+        "Paciente apresentou sintomas de alergia sazonal.",
+        "Dor no peito relatada, necessitando de avaliação cardiológica.",
+	"Ansiedade",
+        "Lesão no joelho durante atividade física, requer reabilitação."
+    ]
+    return [random.choice(historicos) for _ in range(n)]
+
+# Função para gerar diagnósticos com CIDs fictícios
+def gerar_diagnosticos_cids(n):
+    cids = ["", "E11.9", "F41.9", "Z00.00", "J30.9", "I20.9","I20.9", "I20.9", "S83.5"]
+    return [random.choice(cids) for _ in range(n)]
+
+# Função para gerar tags para as consultas
+def gerar_tags_consultas(n):
+    tags = ["Urgente", "Rotina", "Febre", "Acompanhamento","Acompanhamento", "Acompanhamento", "Ansiedade", "Rotina", "Lesão"]
+    return [random.choice(tags) for _ in range(n)]
+
+# Gerar dados fictícios adicionais para consultas
+n_consultas_adicionais = 7  # Para um total de 10 consultas, incluindo as 3 originais
+
 dados_consultas = {
-    "Nome": ["João Silva", "João Silva", "Maria Oliveira"],
-    "Data": [datetime(2023, 12, 1), datetime(2023, 11, 20), datetime(2023, 11, 25)],
-    "Histórico de Anamneses": [
-        "Paciente reclamou de dor nos olhos, boca seca, dor nas juntas. Apos avaliacao inicial constatou-se febre de 40 graus C, saturacao sanguinea de 85, e pressao arterial de 9 por 7",
-        "Consulta de rotina, sem queixas específicas. Realizado exames de sangue.",
-        "Paciente apresentou sintomas de gripe. Diagnosticado com gripe H1N1."
-    ],
-    "Diagnósticos com CIDs": ["H10.9, E86, M25.5", "", "J09"]
+    "Nome": gerar_nomes(n_consultas_adicionais),  # Reutiliza a função gerar_nomes definida anteriormente
+    "Data": gerar_datas_ultima_consulta(n_consultas_adicionais, datetime.now()),
+    "Histórico de Anamneses": gerar_historico_anamneses(n_consultas_adicionais),
+    "Diagnósticos com CIDs": gerar_diagnosticos_cids(n_consultas_adicionais),
+    "Tags": gerar_tags_consultas(n_consultas_adicionais),
 }
 
 df_consultas = pd.DataFrame(dados_consultas)
 
+st.markdown("""
+<style>
+.centered-title {
+    text-align: center;
+}
+</style>
+<h1 class="centered-title">Formulário Exemplo - Consulta com Inteligência Artificial Generativa de Dados dos Pacientes</h1>
+""", unsafe_allow_html=True)
 
-# Interface da Aplicação
-st.title('Dados dos Pacientes')
-
-# Seleção do paciente
 paciente_selecionado = st.selectbox("Selecione um paciente", df_pacientes["Nome"].unique())
 
-# Exibir a tabela com os dados do paciente selecionado
 st.write("Detalhes do Paciente Selecionado:")
 st.table(df_pacientes[df_pacientes["Nome"] == paciente_selecionado])
 
-# Exibir detalhes das últimas consultas do paciente selecionado
+# Campo de busca para tags
+tag_buscada = st.text_input("Buscar consultas por tag:")
+
+# Filtrar consultas pelo paciente selecionado E pela tag, se tag_buscada não estiver vazia
+if tag_buscada:
+    df_consultas_filtradas = df_consultas[(df_consultas["Nome"] == paciente_selecionado) & (df_consultas["Tags"].str.contains(tag_buscada, case=False))]
+else:
+    df_consultas_filtradas = df_consultas[df_consultas["Nome"] == paciente_selecionado]
+
 st.write("Detalhes das Últimas Consultas:")
-df_consultas_filtradas = df_consultas[df_consultas["Nome"] == paciente_selecionado]
 st.table(df_consultas_filtradas)
 
 if st.button("Gerar Relatório"):
     time.sleep(7)
-    # Análise simplificada dos dados para gerar o relatório
-    # Essa parte do código deve ser adaptada para refletir a lógica específica de análise de dados
     sintomas = "Principais sintomas relatados: Dor nos olhos, boca seca, dor nas juntas."
     possiveis_doenças = "Possíveis outras doenças: Devido aos sintomas e histórico, risco aumentado para condições relacionadas a desidratação e infecções virais."
     resumo_saude = "Resumo do histórico de saúde: Paciente com histórico de consultas por sintomas variados, indicando necessidade de monitoramento contínuo para condições crônicas e infecções."
